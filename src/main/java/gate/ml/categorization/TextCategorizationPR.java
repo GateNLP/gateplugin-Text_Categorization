@@ -415,7 +415,7 @@ public class TextCategorizationPR extends AbstractLanguageAnalyser {
           if(sameAnnotation) {
             instAnn.getFeatures().put(outputFeatureName, categoryLabels[label]);
             instAnn.getFeatures().put(outputFeatureName + "-confidence", 
-                new Double(probability));
+                Double.valueOf(probability));
           } else {
             FeatureMap fm = Factory.newFeatureMap();
             fm.put(outputFeatureName, categoryLabels[label]);
