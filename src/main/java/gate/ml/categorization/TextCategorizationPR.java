@@ -62,8 +62,7 @@ import org.apache.log4j.Logger;
  */
 @CreoleResource(name = "Text Categorization PR",
     comment = "Classify text based on a semantic space")
-public class TextCategorizationPR extends AbstractLanguageAnalyser implements
-                                                                   LanguageAnalyser {
+public class TextCategorizationPR extends AbstractLanguageAnalyser {
   
   private static Logger logger = Logger.getLogger(TextCategorizationPR.class);
   
@@ -185,13 +184,10 @@ public class TextCategorizationPR extends AbstractLanguageAnalyser implements
   public Resource init() throws ResourceInstantiationException {
     // load the model
     if(modelURL != null) {
-      InputStreamReader isr = null;
-      try{
+      try(InputStreamReader isr = new InputStreamReader(
+          new BufferedInputStream(modelURL.openStream()), "ISO-8859-1")){
         // the default implementation uses ISO-8859-1, so we do the same
-        isr = new InputStreamReader(
-            new BufferedInputStream(modelURL.openStream()), "ISO-8859-1");
         libLinearModel = Linear.loadModel(isr);
-        isr.close();
       } catch(IOException ioe) {
         throw new ResourceInstantiationException(
             "IO Error while loading the model from " + modelURL, ioe);
@@ -424,7 +420,7 @@ public class TextCategorizationPR extends AbstractLanguageAnalyser implements
             FeatureMap fm = Factory.newFeatureMap();
             fm.put(outputFeatureName, categoryLabels[label]);
             fm.put(outputFeatureName + "-confidence", 
-                new Double(probability));
+                Double.valueOf(probability));
             Utils.addAnn(outputAS, instAnn, outputAnnotationType, fm);
           }
         }
